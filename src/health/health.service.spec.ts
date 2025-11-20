@@ -15,4 +15,21 @@ describe('HealthService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
+
+  describe('checkHealth', () => {
+    const statusRes = { status: 'OK' };
+    it('should return status ok', () => {
+      const result = service.checkHealth();
+
+      expect(result).toEqual(statusRes);
+    });
+
+    it('should always return the same status', () => {
+      const res1 = service.checkHealth();
+      const res2 = service.checkHealth();
+
+      expect(res1).toEqual(statusRes);
+      expect(res2).toEqual(statusRes);
+    });
+  });
 });
