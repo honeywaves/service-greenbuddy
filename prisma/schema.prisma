@@ -1,0 +1,16 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Plant {
+  id           Int      @id @default(autoincrement())
+  name         String
+  mood         String   @default("happy")
+  lastActionAt DateTime @default(now()) @map("last_action_at")
+
+  @@map("plants")
+}
