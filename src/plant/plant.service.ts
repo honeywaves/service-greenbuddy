@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { plants } from 'src/app.module';
-import { Plant } from 'src/types/plant/plant.type';
+import { plants } from 'src/plants.data';
+import type { Plant } from 'src/types/plant/plant.type';
 
 @Injectable()
 export class PlantService {

@@ -6,7 +6,7 @@ import {
   Post,
 } from '@nestjs/common';
 import { PlantService } from './plant.service';
-import { Plant } from 'src/types/plant/plant.type';
+import type { Plant } from 'src/types/plant/plant.type';
 
 @Controller('plant')
 export class PlantController {
