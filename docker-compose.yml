@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:18.1-alpine
+    container_name: greenbuddy-db
+    restart: unless-stopped
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-greenbuddy}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-greenbuddy}
+      POSTGRES_DB: ${POSTGRES_DB:-greenbuddy}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-greenbuddy}']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+volumes:
+  postgres_data:
