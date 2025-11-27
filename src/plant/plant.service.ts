@@ -7,7 +7,7 @@ export class PlantService {
   createPlant(): Plant {
     const newId = plants.length + 1;
     const newPlant: Plant = {
-      id: newId.toString(),
+      id: newId,
       name: 'Plant ' + newId,
       mood: 'happy',
       lastActionAt: new Date(),

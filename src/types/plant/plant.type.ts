@@ -1,5 +1,5 @@
 export type Plant = {
-  id: string;
+  id: number;
   name: string;
   mood: string;
   lastActionAt: Date;
