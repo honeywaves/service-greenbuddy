@@ -6,9 +6,9 @@ import { CreatePlantDto } from './dto/create-plant.dto';
 @Injectable()
 export class PlantService {
   constructor(private readonly prisma: PrismaService) {}
-  async createPlant(plantDataPayload: CreatePlantDto): Promise<Plant> {
+  async createPlant(plantDTO: CreatePlantDto): Promise<Plant> {
     const createdPlant = await this.prisma.plant.create({
-      data: plantDataPayload,
+      data: plantDTO,
     });
 
     return createdPlant;

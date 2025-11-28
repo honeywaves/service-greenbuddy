@@ -4,6 +4,7 @@ import {
   Controller,
   Get,
   Param,
+  ParseIntPipe,
   Post,
 } from '@nestjs/common';
 import { PlantService } from './plant.service';
@@ -15,8 +16,8 @@ export class PlantController {
   constructor(private readonly plantService: PlantService) {}
 
   @Post()
-  async postPlant(@Body() plantData: CreatePlantDto): Promise<Plant> {
-    const newPlant = await this.plantService.createPlant(plantData);
+  async postPlant(@Body() plantDTO: CreatePlantDto): Promise<Plant> {
+    const newPlant = await this.plantService.createPlant(plantDTO);
     return newPlant;
   }
 
@@ -26,9 +27,9 @@ export class PlantController {
   }
 
   @Get(':id')
-  async getPlant(@Param() params: any): Promise<Plant> {
-    if (!params.id) throw new BadRequestException('Plant Id is required');
+  async getPlant(@Param('id', ParseIntPipe) id: number): Promise<Plant> {
+    if (!id) throw new BadRequestException('Plant Id is required');
 
-    return await this.plantService.getPlantById(params.id);
+    return await this.plantService.getPlantById(id);
   }
 }
