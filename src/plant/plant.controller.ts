@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  Body,
   Controller,
   Get,
   Param,
@@ -7,14 +8,15 @@ import {
 } from '@nestjs/common';
 import { PlantService } from './plant.service';
 import type { Plant } from 'src/types/plant/plant.type';
+import { CreatePlantDto } from './dto/create-plant.dto';
 
 @Controller('plant')
 export class PlantController {
   constructor(private readonly plantService: PlantService) {}
 
   @Post()
-  postPlant() {
-    const newPlant = this.plantService.createPlant();
+  async postPlant(@Body() plantData: CreatePlantDto): Promise<Plant> {
+    const newPlant = await this.plantService.createPlant(plantData);
     return newPlant;
   }
 
@@ -24,9 +26,9 @@ export class PlantController {
   }
 
   @Get(':id')
-  getPlant(@Param() params: any): Plant {
+  async getPlant(@Param() params: any): Promise<Plant> {
     if (!params.id) throw new BadRequestException('Plant Id is required');
 
-    return this.plantService.getPlantById(params.id);
+    return await this.plantService.getPlantById(params.id);
   }
 }

@@ -70,4 +70,43 @@ describe('PlantService', () => {
       });
     });
   });
+  describe('createPlant', () => {
+    const mockPlantData: Plant = {
+      id: 1,
+      name: 'New Plant',
+      mood: 'happy',
+      lastActionAt: new Date('2025-01-01'),
+    };
+
+    const mockCreatedPlant: Plant = {
+      id: 1,
+      name: 'New Plant',
+      mood: 'happy',
+      lastActionAt: new Date('2025-01-01'),
+    };
+
+    it('should create a plant and return it', async () => {
+      prisma.plant.create.mockResolvedValue(mockCreatedPlant);
+
+      const res = await service.createPlant(mockPlantData);
+
+      expect(res).toEqual(mockCreatedPlant);
+      expect(prisma.plant.create).toHaveBeenCalledTimes(1);
+    });
+
+    it('should call prisma.plant.create with correct data', async () => {
+      prisma.plant.create.mockResolvedValue(mockCreatedPlant);
+
+      await service.createPlant(mockPlantData);
+
+      expect(prisma.plant.create).toHaveBeenCalledWith({
+        data: {
+          name: expect.any(String),
+          mood: expect.any(String),
+          lastActionAt: expect.any(Date),
+          id: expect.any(Number),
+        },
+      });
+    });
+  });
 });

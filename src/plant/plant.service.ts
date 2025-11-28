@@ -1,13 +1,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
 import type { Plant } from 'src/types/plant/plant.type';
+import { CreatePlantDto } from './dto/create-plant.dto';
 
 @Injectable()
 export class PlantService {
   constructor(private readonly prisma: PrismaService) {}
-  /*createPlant(): Plant {
-    // TODO: Implement
-  }*/
+  async createPlant(plantDataPayload: CreatePlantDto): Promise<Plant> {
+    const createdPlant = await this.prisma.plant.create({
+      data: plantDataPayload,
+    });
+
+    return createdPlant;
+  }
 
   async getPlantById(id: number): Promise<Plant> {
     const plant = await this.prisma.plant.findUnique({
