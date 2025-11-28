@@ -1,29 +1,21 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { plants } from 'src/plants.data';
+import { PrismaService } from 'src/database/prisma.service';
 import type { Plant } from 'src/types/plant/plant.type';
 
 @Injectable()
 export class PlantService {
-  createPlant(): Plant {
-    const newId = plants.length + 1;
-    const newPlant: Plant = {
-      id: newId,
-      name: 'Plant ' + newId,
-      mood: 'happy',
-      lastActionAt: new Date(),
-    };
+  constructor(private readonly prisma: PrismaService) {}
+  /*createPlant(): Plant {
+    // TODO: Implement
+  }*/
 
-    plants.push(newPlant);
+  async getPlantById(id: number): Promise<Plant> {
+    const plant = await this.prisma.plant.findUnique({
+      where: { id },
+    });
 
-    return newPlant;
-  }
+    if (!plant) throw new NotFoundException(`🚫 Plant with ${id} not found`);
 
-  getPlantById(id): Plant {
-    const selectedPlant = plants.find((x: Plant) => x.id === id);
-
-    if (!selectedPlant)
-      throw new NotFoundException(`Plant with ID ${id} not found`);
-
-    return selectedPlant;
+    return plant;
   }
 }

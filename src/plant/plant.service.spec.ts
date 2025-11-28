@@ -1,88 +1,73 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PlantService } from './plant.service';
-import { plants } from 'src/plants.data';
-import { NotFoundException } from '@nestjs/common/exceptions/not-found.exception';
+import { PrismaService } from 'src/database/prisma.service';
+import { mock, describe, it, expect, beforeEach } from 'bun:test';
+import type { Plant } from 'src/types/plant/plant.type';
+import { NotFoundException } from '@nestjs/common';
+
+const mockPrismaService = {
+  plant: {
+    create: mock<(args: unknown) => Promise<Plant>>(() =>
+      Promise.resolve({} as Plant),
+    ),
+    findUnique: mock<(args: unknown) => Promise<Plant | null>>(() =>
+      Promise.resolve(null),
+    ),
+  },
+};
 
 describe('PlantService', () => {
   let service: PlantService;
+  let prisma: typeof mockPrismaService;
 
   beforeEach(async () => {
+    mockPrismaService.plant.create.mockClear();
+    mockPrismaService.plant.findUnique.mockClear();
+
     const module: TestingModule = await Test.createTestingModule({
-      providers: [PlantService],
+      providers: [
+        PlantService,
+        {
+          provide: PrismaService,
+          useValue: mockPrismaService,
+        },
+      ],
     }).compile();
 
     service = module.get<PlantService>(PlantService);
+    prisma = mockPrismaService;
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
 
-  describe('createPlant', () => {
-    beforeEach(() => {
-      plants.length = 0;
-    });
-
-    it('should create a plant', () => {
-      expect(plants).toHaveLength(0);
-
-      service.createPlant();
-
-      expect(plants).toHaveLength(1);
-    });
-
-    it('should create a plant and have a good init', () => {
-      expect(plants).toHaveLength(0);
-
-      const result = service.createPlant();
-
-      expect(result.id).toBe(1);
-      expect(result.name).toBe('Plant 1');
-      expect(result.mood).toBe('happy');
-      expect(result.lastActionAt).toBeInstanceOf(Date);
-      expect(plants).toHaveLength(1);
-      expect(plants[0]).toBe(result);
-    });
-
-    it('should create two plant and increment the ID', () => {
-      expect(plants).toHaveLength(0);
-
-      const _ = service.createPlant();
-      const res2 = service.createPlant();
-
-      expect(res2.id).toBe(2);
-      expect(plants[1]).toBe(res2);
-    });
-  });
-
   describe('getPlantById', () => {
-    beforeEach(() => {
-      plants.length = 0;
-      service.createPlant();
-      service.createPlant();
-      service.createPlant();
+    it('should return a plant when found', async () => {
+      const mockPlant = {
+        id: 1,
+        name: 'Ficus',
+        mood: 'happy',
+        lastActionAt: new Date('2026-01-01'),
+      };
+      prisma.plant.findUnique.mockResolvedValue(mockPlant);
+
+      const result = await service.getPlantById(1);
+
+      expect(result).toEqual(mockPlant);
+      expect(prisma.plant.findUnique).toHaveBeenCalledWith({
+        where: { id: 1 },
+      });
     });
 
-    it('should get a plant by id', () => {
-      const plant = service.getPlantById(1);
-      expect(plant).toBeDefined();
-      expect(plant.id).toBe(1);
-      expect(plant.name).toBe('Plant 1');
-      expect(plant.mood).toBe('happy');
-      expect(plant.lastActionAt).toBeInstanceOf(Date);
-    });
+    it('should throw an error when plant is not found', async () => {
+      prisma.plant.findUnique.mockResolvedValue(null);
 
-    it('should get a plant by id and return the correct plant', () => {
-      const plant = service.getPlantById(3);
-      expect(plant).toBeDefined();
-      expect(plant.id).toBe(plants[2].id);
-      expect(plant.name).toBe(plants[2].name);
-      expect(plant.mood).toBe(plants[2].mood);
-      expect(plant.lastActionAt).toBe(plants[2].lastActionAt);
-    });
+      expect(service.getPlantById(999)).rejects.toThrow(NotFoundException);
 
-    it('should throw an error if the plant is not found', () => {
-      expect(() => service.getPlantById(4)).toThrow(NotFoundException);
+      expect(prisma.plant.findUnique).toHaveBeenCalledWith({
+        where: { id: 999 },
+      });
     });
   });
 });
