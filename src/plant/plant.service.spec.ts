@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { PlantService } from './plant.service';
 import { PrismaService } from 'src/database/prisma.service';
 import { mock, describe, it, expect, beforeEach } from 'bun:test';
-import type { Plant } from 'src/types/plant/plant.type';
+import { PlantMood, type Plant } from 'src/types/plant/plant.type';
 import { NotFoundException } from '@nestjs/common';
 
 const mockPrismaService = {
@@ -47,7 +47,7 @@ describe('PlantService', () => {
       const mockPlant = {
         id: 1,
         name: 'Ficus',
-        mood: 'happy',
+        mood: PlantMood.HAPPY,
         lastActionAt: new Date('2026-01-01'),
       };
       prisma.plant.findUnique.mockResolvedValue(mockPlant);
@@ -74,14 +74,14 @@ describe('PlantService', () => {
     const mockPlantData: Plant = {
       id: 1,
       name: 'New Plant',
-      mood: 'happy',
+      mood: PlantMood.HAPPY,
       lastActionAt: new Date('2025-01-01'),
     };
 
     const mockCreatedPlant: Plant = {
       id: 1,
       name: 'New Plant',
-      mood: 'happy',
+      mood: PlantMood.HAPPY,
       lastActionAt: new Date('2025-01-01'),
     };
 

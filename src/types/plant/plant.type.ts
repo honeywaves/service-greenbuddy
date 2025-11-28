@@ -6,3 +6,13 @@ export type Plant = {
 };
 
 export type Plants = Plant[];
+
+export enum PlantMood {
+  HAPPY = 'happy',
+  SAD = 'sad',
+  ANGRY = 'angry',
+  HUNGRY = 'hungry',
+  THIRSTY = 'thirsty',
+  SICK = 'sick',
+  SLEEPING = 'sleeping',
+}
