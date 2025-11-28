@@ -3,8 +3,7 @@ import {
   IsNotEmpty,
   MinLength,
   IsOptional,
-  IsEnum,
-  Default,
+  IsIn,
 } from 'class-validator';
 
 export class CreatePlantDto {
@@ -13,8 +12,8 @@ export class CreatePlantDto {
   @MinLength(1)
   name: string;
 
-  @Default('happy')
+  @IsString()
   @IsOptional()
-  @IsEnum(['happy', 'sad', 'angry', 'hungry', 'thirsty', 'sick', 'sleeping'])
-  mood: string;
+  @IsIn(['happy', 'sad', 'angry', 'hungry', 'thirsty', 'sick', 'sleeping'])
+  mood?: string;
 }
